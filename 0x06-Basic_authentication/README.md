@@ -1,64 +1,62 @@
-﻿
-# Requirements
+# 0x06. Basic authentication
 
-## General
+## Background Context
 
-- All your files will be interpreted/compiled on Ubuntu 18.04 LTS using python3 (version 3.7)
+In this project, you will learn what the authentication process means and implement a Basic Authentication on a simple API.
+
+## Resources
+
+**Read or watch:**
+
+- [REST API Authentication Mechanisms](https://www.youtube.com/watch?v=501dpx2IjGY)
+- [Base64 in Python](https://docs.python.org/3.7/library/base64.html)
+- [HTTP header Authorization](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
+- [Flask](https://palletsprojects.com/p/flask/)
+- [Base64 - concept](https://en.wikipedia.org/wiki/Base64)
+
+## Learning Objectives
+
+At the end of this project, you are expected to be able to explain to anyone, without the help of Google:
+
+### General
+
+- What authentication means
+- What Base64 is
+- How to encode a string in Base64
+- What Basic authentication means
+- How to send the Authorization header
+
+## Requirements
+
+### Python Scripts
+
+- All your files will be interpreted/compiled on Ubuntu 18.04 LTS using `python3` (version 3.7)
 - All your files should end with a new line
-- The first line of all your files should be exactly #!/usr/bin/env python3
-- A README.md file, at the root of the folder of the project, is mandatory
-- Your code should use the pycodestyle style (version 2.5.*)
-- The length of your files will be tested using wc
-- All your modules should have a documentation (python3 -c 'print(__import__("my_module").__doc__)')
-- All your classes should have a documentation (python3 -c 'print(__import__("my_module").MyClass.__doc__)')
-- All your functions should have a documentation (python3 -c 'print(__import__("my_module").my_function.__doc__)' and python3 -c 'print(__import__("my_module").MyClass.my_function.__doc__)')
-- A documentation is not a simple word, it’s a real sentence explaining what’s the purpose of the module, class or method (the length of it will be verified)
+- The first line of all your files should be exactly `#!/usr/bin/env python3`
+- A `README.md` file, at the root of the folder of the project, is mandatory
+- Your code should use the `pycodestyle` style (version 2.5)
+- All your files must be executable
+- The length of your files will be tested using `wc`
+- All your modules should have a documentation (`python3 -c 'print(__import__("my_module").__doc__)'`)
+- All your classes should have a documentation (`python3 -c 'print(__import__("my_module").MyClass.__doc__)'`)
+- All your functions (inside and outside a class) should have a documentation (`python3 -c 'print(__import__("my_module").my_function.__doc__)'` and `python3 -c 'print(__import__("my_module").MyClass.my_function.__doc__)'`)
 
-#Intructions
+---
 
-## Simple API
-Simple HTTP API for playing with User model.
+## Tasks
 
-## Files
-### models/
-- base.py: base of all models of the API - handle serialization to file
-- user.py: user model
+<details>
+<summary>View Contents</summary>
 
-## api/v1
-- app.py: entry point of the API
-- views/index.py: basic endpoints of the API: /status and /stats
-- views/users.py: all users endpoints
+### 0. Simple-basic-API
 
-## Setup
-```sh
-$ pip3 install -r requirements.txt
+Download and start your project from this [archive.zip](https://intranet.hbtn.io/rltoken/nmacHNw4nQMR3AR2Zckj9w)
+
+In this archive, you will find a simple API with one model: `User`. Storage of these users is done via a serialization/deserialization in files.
+
+**Setup and start server**
+
 ```
-
-## Run
-```sh
-$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
-```
-
-## Routes
-- GET /api/v1/status: returns the status of the API
-- GET /api/v1/stats: returns some stats of the API
-- GET /api/v1/users: returns the list of users
-- GET /api/v1/users/:id: returns an user based on the ID
-- DELETE /api/v1/users/:id: deletes an user based on the ID
-- POST /api/v1/users: creates a new user (JSON parameters: email, password, - last_name (optional) and first_name (optional))
-- PUT /api/v1/users/:id: updates an user based on the ID (JSON parameters: last_name and first_name)
-
-
-
-## Task
-
-**0. Simple-basic-API**
-
-In this archive, you will find a simple API with one model: User. Storage of these users is done via a serialization/deserialization in files.
-
-## Setup and start server
-
-```sh
 bob@dylan:~$ pip3 install -r requirements.txt
 ...
 bob@dylan:~$
@@ -67,9 +65,9 @@ bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
 ...
 bob@dylan:~$
 ```
+**Use the API (in another tab or in your browser)**
 
-## Use the API (in another tab or in your browser)
-```sh
+```
 bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status" -vvv
 *   Trying 0.0.0.0...
 * TCP_NODELAY set
@@ -92,30 +90,32 @@ bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status" -vvv
 bob@dylan:~$
 ```
 
+**Repo:**
 
-**1. Error handler: Unauthorized**
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
 
-File: [api/v1/app.py](api/v1/app.py/) - [api/v1/views/index.py](api/v1/views/index.py/)
+### [1. Error handler: Unauthorized](./api/v1/views/index.py)
 
-What the HTTP status code for a request unauthorized? 401 of course!
+What the HTTP status code for a request unauthorized? `401` of course!
 
-Edit api/v1/app.py:
+Edit `api/v1/app.py`:
 
 - Add a new error handler for this status code, the response must be:
-> - a JSON: {"error": "Unauthorized"}
-> - status code 401
-> - you must use jsonify from Flask
+  - a JSON: `{"error": "Unauthorized"}`
+  - status code `401`
+  - you must use `jsonify` from Flask
 
-For testing this new error handler, add a new endpoint in api/v1/views/index.py:
+For testing this new error handler, add a new endpoint in `api/v1/views/index.py`:
 
-- Route: GET /api/v1/unauthorized
-- This endpoint must raise a 401 error by using abort - Custom Error Pages
+- Route: `GET /api/v1/unauthorized`
+- This endpoint must raise a 401 error by using `abort` - [Custom Error Pages](https://intranet.hbtn.io/rltoken/_0XkgV2FAt-cM23Zg8G0OA)
 
-By calling abort(401), the error handler for 401 will be executed.
+By calling `abort(401)`, the error handler for 401 will be executed.
 
 In the first terminal:
 
-```sh
+```
 bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ....
@@ -123,7 +123,7 @@ bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
 
 In a second terminal:
 
-```sh
+```
 bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/unauthorized"
 {
   "error": "Unauthorized"
@@ -152,28 +152,33 @@ bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/unauthorized" -vvv
 bob@dylan:~$
 ```
 
-**2. Error handler: Forbidden**
+**Repo:**
 
-File: [api/v1/app.py](api/v1/app.py/) - [api/v1/views/index.py](api/v1/views/index.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/app.py, api/v1/views/index.py`
 
-What the HTTP status code for a request where the user is authenticate but not allowed to access to a resource? 403 of course!
+### [2. Error handler: Forbidden](./api/v1/views/index.py)
 
-Edit api/v1/app.py:
+What the HTTP status code for a request where the user is authenticate but not allowed to access to a resource? `403` of course!
+
+Edit `api/v1/app.py`:
 
 - Add a new error handler for this status code, the response must be:
-> - a JSON: {"error": "Forbidden"}
-> - status code 403
-> - you must use jsonify from Flask
+  - a JSON: `{"error": "Forbidden"}`
+  - status code `403`
+  - you must use `jsonify` from Flask
 
-For testing this new error handler, add a new endpoint in api/v1/views/index.py:
+For testing this new error handler, add a new endpoint in `api/v1/views/index.py`:
 
-- Route: GET /api/v1/forbidden
-- This endpoint must raise a 403 error by using abort - Custom Error Pages
+- Route: `GET /api/v1/forbidden`
+- This endpoint must raise a 403 error by using `abort` - [Custom Error Pages](https://intranet.hbtn.io/rltoken/_0XkgV2FAt-cM23Zg8G0OA)
 
-By calling abort(403), the error handler for 403 will be executed.
+By calling `abort(403)`, the error handler for 403 will be executed.
 
 In the first terminal:
-```sh
+
+```
 bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ....
@@ -181,7 +186,7 @@ bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
 
 In a second terminal:
 
-```sh
+```
 bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/forbidden"
 {
   "error": "Forbidden"
@@ -210,25 +215,29 @@ bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/forbidden" -vvv
 bob@dylan:~$
 ```
 
-**3. Auth class**
+**Repo:**
 
-File: [api/v1/auth](api/v1/auth/) - [api/v1/auth/__init__.py](api/v1/auth/__init__.py/) - [api/v1/auth/auth.py](api/v1/auth/auth.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/app.py, api/v1/views/index.py`
+
+### [3. Auth class](./api/v1/auth/auth.py)
 
 Now you will create a class to manage the API authentication.
 
-- Create a folder api/v1/auth
-- Create an empty file api/v1/auth/__init__.py
-- Create the class Auth:
-> - in the file api/v1/auth/auth.py
-> - import request from flask
-> - class name Auth
-> - public method def require_auth(self, path: str, excluded_paths: List[str]) -> bool: that returns False - path and excluded_paths will be used later, now, you don’t need to take care of them
-> - public method def authorization_header(self, request=None) -> str: that returns None - request will be the Flask request object
-> - public method def current_user(self, request=None) -> TypeVar('User'): that returns None - request will be the Flask request object
+- Create a folder `api/v1/auth`
+- Create an empty file `api/v1/auth/__init__.py`
+- Create the class `Auth`:
+- in the file `api/v1/auth/auth.py`
+- import `request` from `flask`
+- class name `Auth`
+- public method `def require_auth(self, path: str, excluded_paths: List[str]) -> bool:` that returns `False` - `path` and `excluded_paths` will be used later, now, you don’t need to take care of them
+- public method `def authorization_header(self, request=None) -> str:` that returns `None` - `request` will be the Flask request object
+- public method `def current_user(self, request=None) -> TypeVar('User'):` that returns `None` - `request` will be the Flask request object
 
 This class is the template for all authentication system you will implement.
 
-```sh
+```
 bob@dylan:~$ cat main_0.py
 #!/usr/bin/env python3
 """ Main 0
@@ -248,20 +257,23 @@ None
 None
 bob@dylan:~$
 ```
+**Repo:**
 
-**4. Define which routes don't need authentication**
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/auth, api/v1/auth/__init__.py, api/v1/auth/auth.py`
 
-File: [api/v1/auth/auth.py](api/v1/auth/auth.py/)
+### [4. Define which routes don't need authentication](./api/v1/auth/auth.py)
 
-Update the method def require_auth(self, path: str, excluded_paths: List[str]) -> bool: in Auth that returns True if the path is not in the list of strings excluded_paths:
+Update the method `def require_auth(self, path: str, excluded_paths: List[str]) -> bool:` in `Auth` that returns `True` if the `path` is not in the list of strings `excluded_paths`:
 
-- Returns True if path is None
-- Returns True if excluded_paths is None or empty
-- Returns False if path is in excluded_paths
-- You can assume excluded_paths contains string path always ending by a /
-- This method must be slash tolerant: path=/api/v1/status and path=/api/v1/status/ must be returned False if excluded_paths contains /api/v1/status/
+- Returns `True` if `path` is `None`
+- Returns `True` if `excluded_paths` is `None` or empty
+- Returns `False` if `path` is in `excluded_paths`
+- You can assume `excluded_paths` contains string path always ending by a `/`
+- This method must be slash tolerant: `path=/api/v1/status` and `path=/api/v1/status/` must be returned `False` if `excluded_paths` contains `/api/v1/status/`
 
-```sh
+```
 bob@dylan:~$ cat main_1.py
 #!/usr/bin/env python3
 """ Main 1
@@ -290,44 +302,49 @@ True
 bob@dylan:~$
 ```
 
-**5. Request validation!**
+**Repo:**
 
-File: [api/v1/app.py](api/v1/app.py/) - [api/v1/auth/auth.py](api/v1/auth/auth.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/auth/auth.py`
+
+### [5. Request validation!](./api/v1/auth/auth.py)
 
 Now you will validate all requests to secure the API:
 
-Update the method def authorization_header(self, request=None) -> str: in api/v1/auth/auth.py:
+Update the method `def authorization_header(self, request=None) -> str:` in `api/v1/auth/auth.py`:
 
-- If request is None, returns None
-- If request doesn’t contain the header key Authorization, returns None
-- Otherwise, return the value of the header request Authorization
+- If `request` is `None`, returns `None`
+- If `request` doesn’t contain the header key `Authorization`, returns `None`
+- Otherwise, return the value of the header request `Authorization`
 
-Update the file api/v1/app.py:
+Update the file `api/v1/app.py`:
 
-- Create a variable auth initialized to None after the CORS definition
-- Based on the environment variable AUTH_TYPE, load and assign the right instance of authentication to auth
-> - if auth:
-> > - import Auth from api.v1.auth.auth
-> > - create an instance of Auth and assign it to the variable auth
+- Create a variable `auth` initialized to `None` after the `CORS` definition
+- Based on the environment variable `AUTH_TYPE`, load and assign the right instance of authentication to `auth`
+  - if `auth`:
+    - import `Auth` from `api.v1.auth.auth`
+    - create an instance of `Auth` and assign it to the variable `auth`
 
-Now the biggest piece is the filtering of each request. For that you will use the Flask method before_request
+Now the biggest piece is the filtering of each request. For that you will use the Flask method [before_request]()
 
-- Add a method in api/v1/app.py to handler before_request
-> - if auth is None, do nothing
-> - if request.path is not part of this list ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/'], do nothing - you must use the method require_auth from the auth instance
-> - if auth.authorization_header(request) returns None, raise the error 401 - you must use abort
-> - if auth.current_user(request) returns None, raise the error 403 - you must use abort
+- Add a method in `api/v1/app.py` to handler `before_request`
+- if `auth` is `None`, do nothing
+- if `request.path` is not part of this list `['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']`, do nothing - you must use the method `require_auth` from the `auth` instance
+- if `auth.authorization_header(request)` returns `None`, raise the error `401` - you must use `abort`
+- if `auth.current_user(request)` returns `None`, raise the error `403` - you must use `abort`
 
 In the first terminal:
 
-```sh
+```
 bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=auth python3 -m api.v1.app
  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ....
 ```
 
 In a second terminal:
-```sh
+
+```
 bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status"
 {
   "status": "OK"
@@ -350,23 +367,26 @@ bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
 bob@dylan:~$
 ```
 
+**Repo:**
 
-**6. Basic auth**
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/app.py, api/v1/auth/auth.py`
 
-File: [api/v1/app.py](api/v1/app.py/) - [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py/)
+### [6. Basic auth](./api/v1/auth/basic_auth.py)
 
-Create a class BasicAuth that inherits from Auth. For the moment this class will be empty.
+Create a class `BasicAuth` that inherits from `Auth`. For the moment this class will be empty.
 
-Update api/v1/app.py for using BasicAuth class instead of Auth depending of the value of the environment variable AUTH_TYPE, If AUTH_TYPE is equal to basic_auth:
+Update `api/v1/app.py` for using `BasicAuth` class instead of `Auth` depending of the value of the environment variable `AUTH_TYPE`, If `AUTH_TYPE` is equal to `basic_auth`:
 
-- import BasicAuth from api.v1.auth.basic_auth
-- create an instance of BasicAuth and assign it to the variable auth
+- import `BasicAuth` from `api.v1.auth.basic_auth`
+- create an instance of `BasicAuth` and assign it to the variable `auth`
 
-Otherwise, keep the previous mechanism with auth an instance of Auth.
+Otherwise, keep the previous mechanism with `auth` an instance of `Auth`.
 
 In the first terminal:
 
-```sh
+```
 bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ....
@@ -374,7 +394,7 @@ bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.
 
 In a second terminal:
 
-```sh
+```
 bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status"
 {
   "status": "OK"
@@ -397,19 +417,23 @@ bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Test"
 bob@dylan:~$
 ```
 
-**7. Basic - Base64 part**
+**Repo:**
 
-File: [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/app.py, api/v1/auth/basic_auth.py`
 
-Add the method def extract_base64_authorization_header(self, authorization_header: str) -> str: in the class BasicAuth that returns the Base64 part of the Authorization header for a Basic Authentication:
+### [7. Basic - Base64 part](./api/v1/auth/basic_auth.py)
 
-- Return None if authorization_header is None
-- Return None if authorization_header is not a string
-- Return None if authorization_header doesn’t start by Basic (with a space at the end)
-- Otherwise, return the value after Basic (after the space)
-- You can assume authorization_header contains only one Basic
+Add the method `def extract_base64_authorization_header(self, authorization_header: str) -> str`: in the class `BasicAuth` that returns the Base64 part of the `Authorization` header for a Basic Authentication:
 
-```sh
+- Return `None` if `authorization_header` is `None`
+- Return `None` if `authorization_header` is not a string
+- Return `None` if `authorization_header` doesn’t start by `Basic` (with a space at the end)
+- Otherwise, return the value after `Basic` (after the space)
+- You can assume `authorization_header` contains only one `Basic`
+
+```
 bob@dylan:~$ cat main_2.py
 #!/usr/bin/env python3
 """ Main 2
@@ -438,18 +462,22 @@ None
 bob@dylan:~$
 ```
 
-**8. Basic - Base64 decode**
+**Repo:**
 
-File: [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/auth/basic_auth.py`
 
-Add the method def decode_base64_authorization_header(self, base64_authorization_header: str) -> str: in the class BasicAuth that returns the decoded value of a Base64 string base64_authorization_header:
+### [8. Basic - Base64 decode](./api/v1/auth/basic_auth.py)
 
-- Return None if base64_authorization_header is None
-- Return None if base64_authorization_header is not a string
-- Return None if base64_authorization_header is not a valid Base64 - you can use try/except
-- Otherwise, return the decoded value as UTF8 string - you can use decode('utf-8')
+Add the method `def decode_base64_authorization_header(self, base64_authorization_header: str) -> str`: in the class `BasicAuth` that returns the decoded value of a Base64 string `base64_authorization_header`:
 
-```sh
+- Return `None` if `base64_authorization_header` is `None`
+- Return `None` if `base64_authorization_header` is not a string
+- Return `None` if `base64_authorization_header` is not a valid Base64 - you can use `try/except`
+- Otherwise, return the decoded value as UTF8 string - you can use `decode('utf-8')`
+
+```
 bob@dylan:~$ cat main_3.py
 #!/usr/bin/env python3
 """ Main 3
@@ -476,20 +504,24 @@ Holberton School
 bob@dylan:~$
 ```
 
-**9. Basic - User credentials**
+**Repo:**
 
-File: [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/auth/basic_auth.py`
 
-Add the method def extract_user_credentials(self, decoded_base64_authorization_header: str) -> (str, str) in the class BasicAuth that returns the user email and password from the Base64 decoded value.
+### [9. Basic - User credentials](./api/v1/auth/basic_auth.py)
+
+Add the method `def extract_user_credentials(self, decoded_base64_authorization_header: str) -> (str, str)` in the class `BasicAuth` that returns the user email and password from the Base64 decoded value.
 
 - This method must return 2 values
-- Return None, None if decoded_base64_authorization_header is None
-- Return None, None if decoded_base64_authorization_header is not a string
-- Return None, None if decoded_base64_authorization_header doesn’t contain :
-- Otherwise, return the user email and the user password - these 2 values must be separated by a :
-- You can assume decoded_base64_authorization_header will contain only one :
+- Return `None, None` if `decoded_base64_authorization_header` is `None`
+- Return `None, None` if `decoded_base64_authorization_header` is not a string
+- Return `None, None` if `decoded_base64_authorization_header` doesn’t contain `:`
+- Otherwise, return the user email and the user password - these 2 values must be separated by a `:`
+- You can assume `decoded_base64_authorization_header` will contain only one `:`
 
-```sh
+```
 bob@dylan:~$ cat main_4.py
 #!/usr/bin/env python3
 """ Main 4
@@ -514,19 +546,23 @@ bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 ./main_4.py
 bob@dylan:~$
 ```
 
-**10. Basic - User object**
+**Repo:**
 
-File: [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/auth/basic_auth.py`
 
-Add the method def user_object_from_credentials(self, user_email: str, user_pwd: str) -> TypeVar('User'): in the class BasicAuth that returns the User instance based on his email and password.
+### [10. Basic - User object](./api/v1/auth/basic_auth.py)
 
-- Return None if user_email is None or not a string
-- Return None if user_pwd is None or not a string
-- Return None if your database (file) doesn’t contain any User instance with email equal to user_email - you should use the class method search of the User to lookup the list of users based on their email. Don’t forget to test all cases: “what if there is no user in DB?”, etc.
-- Return None if user_pwd is not the password of the User instance found - you must use the method is_valid_password of User
-- Otherwise, return the User instance
+Add the method `def user_object_from_credentials(self, user_email: str, user_pwd: str) -> TypeVar('User'):` in the class `BasicAuth` that returns the `User` instance based on his email and password.
 
-```sh
+- Return `None` if `user_email` is `None` or not a string
+- Return `None` if `user_pwd` is `None` or not a string
+- Return `None` if your database (file) doesn’t contain any `User` instance with email equal to `user_email` - you should use the class method `search` of the `User` to lookup the list of users based on their email. Don’t forget to test all cases: “what if there is no user in DB?”, etc.
+- Return `None` if `user_pwd` is not the password of the `User` instance found - you must use the method `is_valid_password` of `User`
+- Otherwise, return the `User` instance
+
+```
 bob@dylan:~$ cat main_5.py
 #!/usr/bin/env python3
 """ Main 5
@@ -576,25 +612,29 @@ Bob Dylan
 bob@dylan:~$
 ```
 
-**11. Basic - Overload current_user - and BOOM!**
+**Repo:**
 
-File: [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/auth/basic_auth.py`
+
+### [11. Basic - Overload current_user - and BOOM!](./api/v1/auth/basic_auth.py)
 
 Now, you have all pieces for having a complete Basic authentication.
 
-Add the method def current_user(self, request=None) -> TypeVar('User') in the class BasicAuth that overloads Auth and retrieves the User instance for a request:
+Add the method `def current_user(self, request=None) -> TypeVar('User')` in the class `BasicAuth` that overloads `Auth` and retrieves the `User` instance for a request:
 
-- You must use authorization_header
-- You must use extract_base64_authorization_header
-- You must use decode_base64_authorization_header
-- You must use extract_user_credentials
-- You must use user_object_from_credentials
-- With this update, now your API is fully protected by a Basic Authentication. 
-Enjoy!
+- You must use `authorization_header`
+- You must use `extract_base64_authorization_header`
+- You must use `decode_base64_authorization_header`
+- You must use `extract_user_credentials`
+- You must use `user_object_from_credentials`
+
+With this update, now your API is fully protected by a Basic Authentication. Enjoy!
 
 In the first terminal:
 
-```sh
+```
 bob@dylan:~$ cat main_6.py
 #!/usr/bin/env python3
 """ Main 6
@@ -623,13 +663,11 @@ bob@dylan:~$
 bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.v1.app
  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ....
-
 ```
 
 In a second terminal:
 
-```sh
-
+```
 bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status"
 {
   "status": "OK"
@@ -664,15 +702,19 @@ bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic Ym
 bob@dylan:~$ 
 ```
 
-**12. Basic - Allow password with ":"**
+**Repo:**
 
-File: [api/v1/auth/basic_auth.py](api/v1/auth/basic_auth.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/auth/basic_auth.py`
 
-Improve the method def extract_user_credentials(self, decoded_base64_authorization_header) to allow password with :.
+### [12. Basic - Allow password with ":" #advanced](./api/v1/auth/basic_auth.py)
+
+Improve the method `def extract_user_credentials(self, decoded_base64_authorization_header)` to allow password with `:`.
 
 In the first terminal:
 
-```sh
+```
 bob@dylan:~$ cat main_100.py
 #!/usr/bin/env python3
 """ Main 100
@@ -706,7 +748,7 @@ bob@dylan:~$ API_HOST=0.0.0.0 API_PORT=5000 AUTH_TYPE=basic_auth python3 -m api.
 
 In a second terminal:
 
-```sh
+```
 bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/status"
 {
   "status": "OK"
@@ -749,14 +791,28 @@ bob@dylan:~$ curl "http://0.0.0.0:5000/api/v1/users" -H "Authorization: Basic Ym
 bob@dylan:~$
 ```
 
-**13. Require auth with stars**
+**Repo:**
 
-File: [api/v1/auth/auth.py](api/v1/auth/auth.py/)
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/auth/basic_auth.py`
 
-Improve def require_auth(self, path, excluded_paths) by allowing * at the end of excluded paths.
+### [13. Require auth with stars #advanced](./api/v1/auth/auth.py)
 
-Example for excluded_paths = ["/api/v1/stat*"]:
+Improve `def require_auth(self, path, excluded_paths)` by allowing `*` at the end of excluded paths.
 
-- /api/v1/users will return True
-- /api/v1/status will return False
-- /api/v1/stats will return False
+Example for `excluded_paths = ["/api/v1/stat*"]`:
+
+- `/api/v1/users` will return `True`
+- `/api/v1/status` will return `False`
+- `/api/v1/stats` will return `False`
+
+**Repo:**
+
+* GitHub repository: `holbertonschool-web_back_end`
+* Directory: `0x06-Basic_authentication`
+* File: `api/v1/auth/auth.py`
+
+</details>
+
+---
