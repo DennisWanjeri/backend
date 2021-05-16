@@ -62,3 +62,22 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         user=username,
         password=psw)
     return conn
+
+def main() -> None:
+    """a main method that accesses the database"""
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    fields = [user[0] for user in cursor.description]
+    print(fields)
+
+    logger = get_logger()
+
+    for i in cursor:
+        list_row = ''.join(f'{f}={str(r)}; ' for r, f in zip(i, fields))
+        logger.info(i)
+    cursor.close()
+    db.close()
+
+if __name__ == "__main__":
+    main()
