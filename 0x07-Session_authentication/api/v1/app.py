@@ -25,13 +25,16 @@ if auth:
     elif auth == 'session_auth':
         from api.v1.auth.session_auth import SessionAuth
         auth = SessionAuth()
+    elif auth == 'session_exp_auth':
+        from api.v1.auth.session_exp_auth import SessionExpAuth
+        auth = SessionExpAuth()
 
 @app.before_request
 def before_request_func():
     """ Before request"""
     if auth is None:
         return
-    path_list = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    path_list = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/', '/api/v1/auth_session/login/']
     if auth.require_auth(request.path, path_list) is False:
         return
     elif auth.authorization_header(request) is None:
@@ -41,6 +44,9 @@ def before_request_func():
     request.current_user = auth.current_user(request)
     if not request.current_user:
         abort(403)
+    if auth.authorization_header(request) is None and auth.session_cookie(request):
+        abort(401)
+    
         
 @app.errorhandler(404)
 def not_found(error) -> str:
