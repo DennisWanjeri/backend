@@ -28,24 +28,23 @@ if auth:
     elif auth == 'session_exp_auth':
         from api.v1.auth.session_exp_auth import SessionExpAuth
         auth = SessionExpAuth()
-
+    elif auth == 'session_db_auth':
+        from api.v1.auth.session_db_auth import SessionDBAuth
+        auth = SessionDBAuth()
+        
 @app.before_request
 def before_request_func():
     """ Before request"""
     if auth is None:
         return
     path_list = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/', '/api/v1/auth_session/login/']
-    if auth.require_auth(request.path, path_list) is False:
+    if not auth.require_auth(request.path, path_list):
         return
-    elif auth.authorization_header(request) is None:
+    if (not auth.authorization_header(request) and not auth.session_cookie(request)):
         abort(401)
-    elif auth.current_user(request) is None:
-        abort(403)
     request.current_user = auth.current_user(request)
     if not request.current_user:
         abort(403)
-    if auth.authorization_header(request) is None and auth.session_cookie(request):
-        abort(401)
     
         
 @app.errorhandler(404)

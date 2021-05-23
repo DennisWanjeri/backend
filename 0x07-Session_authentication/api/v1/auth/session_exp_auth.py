@@ -45,5 +45,5 @@ class SessionExpAuth(SessionAuth):
                 if not created_at:
                     return None
                 if datetime.now() > created_at + timedelta(seconds=sd):
-                    return Null
+                    return None
                 return user
