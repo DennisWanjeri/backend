@@ -6,7 +6,7 @@ Babel Flask extension
 
 from flask import Flask, render_template, request, g
 from flask_babel import Babel
-
+import pytz
 
 app = Flask(__name__)
 babel = Babel(app)
@@ -68,6 +68,26 @@ def get_locale():
     if headers:
         return headers
     return request.accept_languages.best_match(Config.LANGUAGES)
+@babel.timezoneselector
+def get_timezone():
+    """
+    get_timezone
+    """
+    timezone = request.args.get('timezone')
+    if timezone:
+        try:
+            return pytz.timezone(timezone)
+        except pytz.exceptions.UnknownTimeZoneError:
+            pass
+    if g.user:
+        timezone = g.user.get('timezone')
+        if timezone:
+            try:
+                return pytz.timezone(timezone)
+            except pytz.exceptions.UnknownTimeZoneError:
+                pass
+    return pytz.timezone('utc')
+    
 
 @app.route('/', methods=["GET"], strict_slashes=False)
 def hello():
